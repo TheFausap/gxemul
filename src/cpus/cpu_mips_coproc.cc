@@ -1008,6 +1008,7 @@ static const char *ccname[16] = {
 #define FPU_OP_CEIL	13
 #define FPU_OP_FLOOR	14
 /*  TODO: RECIP, RSQRT  */
+#define FPU_OP_RECIP    15
 
 
 /*
@@ -1168,6 +1169,31 @@ static int fpu_op(struct cpu *cpu, struct mips_coproc *cp, int op, int fmt,
 		/*  debug("  floor: %f => %f\n", float_value[0].f, nf);  */
 		fpu_store_float_value(cp, fd, nf, output_fmt,
 		    float_value[0].nan);
+		break;
+	case FPU_OP_RECIP:
+		nan = float_value[0].nan;
+		if (fabs(float_value[0].f) > 0.00000000001)
+			nf = 1.0 / float_value[0].f;
+		else {
+			fatal("RECIP of zero !!!!\n");
+			nf = 0.0;	/*  TODO  */
+			nan = 1;
+		}
+		/*  debug("  recip: %f => %f\n", float_value[0].f, nf);  */
+		fpu_store_float_value(cp, fd, nf, output_fmt, nan);
+		break;
+	case FPU_OP_RSQRT:
+		nan = float_value[0].nan;
+		if (float_value[0].f >= 0.0)
+			nf = 1.0 / sqrt(float_value[0].f);
+		else {
+			fatal("RSQRT by less than zero, %f !!!!\n",
+			    float_value[0].f);
+			nf = 0.0;	/*  TODO  */
+			nan = 1;
+		}
+		/*  debug("  rsqrt: %f => %f\n", float_value[0].f, nf);  */
+		fpu_store_float_value(cp, fd, nf, output_fmt, nan);
 		break;
 	case FPU_OP_MOV:
 		/*  Non-arithmetic move:  */
