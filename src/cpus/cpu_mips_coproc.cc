@@ -1007,8 +1007,8 @@ static const char *ccname[16] = {
 #define FPU_OP_TRUNC	12
 #define FPU_OP_CEIL	13
 #define FPU_OP_FLOOR	14
-/*  TODO: RECIP, RSQRT  */
 #define FPU_OP_RECIP    15
+#define FPU_OP_RSQRT    16
 
 
 /*
